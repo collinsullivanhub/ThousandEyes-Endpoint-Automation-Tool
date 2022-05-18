@@ -20,8 +20,6 @@ def get_epas():
     epa = []
     epas = requests.get(api_endpoint, auth=(username, api_key))
     epas = json.loads(epas.text)
-
-    #COLLECT EPAS###################################################################
     epa.append(epas["endpointAgents"])
     while "next" in epas["pages"]:
         api_endpoint = epas["pages"]["next"]
@@ -33,9 +31,6 @@ def get_epas():
         for lst in epa:
             for agent in lst:
                 final_list_epas.append(agent)
-    #COLLECT EPAS###################################################################
-
-    #ITERATE THROUGH JSON###########################################################
     count = 0
     new_agents_ids = []
     new_agents_names = []
@@ -45,32 +40,13 @@ def get_epas():
         computerName = x['computerName']
         createdTime = x['createdTime']
         status = x['status']
-
-        if "2022-02-10" in createdTime:
-            new_agents_ids.append(agentId)
-            headers = {"content-type": "application/json"}
-            payload = {
-                    "status": "disabled"
-            }
-
-            result = requests.put(
-                f"https://api.thousandeyes.com/v6/endpoint-agents/{agentId}/disable.json",
-                json=payload,
-                headers=headers,
-                auth=(username, api_key),
-            )
-            print(f"\u001b[32m[*] {agentName} DISABLED: {agentId} !\u001b[0m")
-            time.sleep(.5)
-            count+=1
-    #ITERATE THROUGH JSON###########################################################
-
-    #PRINT TOTAL COUNT##############################################################
+       
     print(f"\u001b[33m[*] Total agents discovered:\u001b[0m {count}")
     new_agent_count = 0
     for a in new_agents_ids:
         new_agent_count += 1
     print(f"\u001b[33m[*] Total new agents discovered and disabled\u001b[0m: {new_agent_count}")
-    #PRINT TOTAL COUNT##############################################################
+
 
 
 def rename_all_epas():
